@@ -73,33 +73,38 @@ class TodoList extends Component {
     this.state.inputState = document.getElementById('new-todo').value;
   }
 
+  toggleTask(index) {
+    this.state.tasks[index].completed = !this.state.tasks[index].completed;
+    this.update();
+  }
+
   render() {
-    return createElement("div", { class: "todo-list" }, [
+    return createElement("div", {class: "todo-list"}, [
       createElement("h1", {}, "TODO List"),
-      createElement("div", { class: "add-todo" }, [
+      createElement("div", {class: "add-todo"}, [
         createElement("input", {
           id: "new-todo",
           type: "text",
           placeholder: "Задание",
         }, {}, ['input', this.onAddInputChange.bind(this)]),
-        createElement("button", { id: "add-btn" }, "+", ['click', this.onAddTask.bind(this)])
+        createElement("button", {id: "add-btn"}, "+", ['click', this.onAddTask.bind(this)])
       ]),
-      createElement("ul", { id: "todos" }, this.state.tasks.map(task => {
-        const attr = {
-          type: "checkbox",
-        }
-        if (task.completed)
-          attr.checked = '';
-        return createElement("li", { key: task.id }, [
-          createElement("input", attr),
-          createElement("label", {}, task.text),
-          createElement("button", {}, "🗑", ['click', () => {
-            const index = this.state.tasks.findIndex(t => t.id === task.id);
-            this.state.tasks.splice(index, 1);
-            this.update();
-          }])
-        ])
-      }
+      createElement("ul", {id: "todos"}, this.state.tasks.map((task, index) => {
+            const attr = {
+              type: "checkbox",
+            }
+            if (task.completed)
+              attr.checked = '';
+            return createElement("li", {key: task.id}, [
+              createElement("input", attr, {}, ['change', () => this.toggleTask(index)]),
+              createElement("label", { style: task.completed ? 'color: gray' : '' }, task.text),
+              createElement("button", {}, "🗑", ['click', () => {
+                const index = this.state.tasks.findIndex(t => t.id === task.id);
+                this.state.tasks.splice(index, 1);
+                this.update();
+              }])
+            ])
+          }
       ))
     ]);
   }
