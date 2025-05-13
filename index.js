@@ -1,4 +1,4 @@
-﻿function createElement(tag, attributes, children) {
+﻿function createElement(tag, attributes, children, ...callbacks) {
   const element = document.createElement(tag);
 
   if (attributes) {
@@ -46,6 +46,21 @@ class TodoList extends Component {
     };
   }
 
+  onAddTask() {
+    this.state.tasks.push({
+      id: this.state.tasks.length + 1,
+       text: '',
+        completed: false}
+      );
+  }
+
+  onAddInputChange() {
+    const input = document.getElementById('new-todo');
+    this.state.inputState = {
+      placeholder: input.placeholder,
+    };
+  }
+
   render() {
     return createElement("div", { class: "todo-list" }, [
       createElement("h1", {}, "TODO List"),
@@ -54,17 +69,21 @@ class TodoList extends Component {
           id: "new-todo",
           type: "text",
           placeholder: "Задание",
-        }),
-        createElement("button", { id: "add-btn" }, "+"),
+        }, this.onAddInputChange),
+        createElement("button", { id: "add-btn" }, "+", this.onAddTask),
       ]),
       createElement("ul", { id: "todos" }, this.state.tasks.map(task => (
           createElement("li", { key: task.id }, [
-            createElement("input", { type: "checkbox", checked: task.completed }),
+            createElement("input", { 
+                type: "checkbox",
+                checked: task.completed
+              }, this.onAddInputChange),
             createElement("label", {}, task.text),
-            createElement("button", {}, "🗑️")
+            createElement("button", {}, "🗑️", this.onAddTask)
           ])
       )))
-    ]);
+    ]
+  );
   }
 }
 
